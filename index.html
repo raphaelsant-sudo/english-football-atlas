@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07101f">
+  <title>English Football Atlas</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root{--bg:#070e1c;--panel:#0d192b;--line:#26364b;--muted:#9aabc0;--red:#ed3035;--white:#f4f6fa}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,Helvetica,sans-serif}
+    header{padding:25px clamp(20px,5vw,64px);border-bottom:1px solid #1d2b3e;display:flex;justify-content:space-between;align-items:center;gap:20px}
+    .brand{font-weight:900;letter-spacing:.12em;font-size:14px}.brand span{color:var(--red)}
+    nav{display:flex;gap:22px;flex-wrap:wrap}nav a{color:#c3cfdd;text-decoration:none;font-size:13px}nav a:hover{color:white}
+    main{max-width:1440px;margin:auto;padding:34px clamp(20px,5vw,64px) 60px}
+    .eyebrow{color:#9eb0c6;letter-spacing:.2em;text-transform:uppercase;font-size:11px;font-weight:bold}
+    h1{font-size:clamp(32px,5vw,58px);line-height:1.02;margin:12px 0 10px;font-weight:900;letter-spacing:-.04em}
+    .intro{color:#aebdd0;margin:0 0 28px;line-height:1.6}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    button{cursor:pointer;border:1px solid #314158;background:transparent;color:#c4d0df;padding:10px 14px;font-size:11px;letter-spacing:.12em;font-weight:bold}
+    button.active,button:hover{background:var(--red);border-color:var(--red);color:white}
+    .layout{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(280px,.85fr);gap:16px}
+    #map{height:570px;background:#1e2b35;border:1px solid var(--line)}
+    .side{background:var(--panel);border:1px solid var(--line);padding:24px;display:flex;flex-direction:column;min-height:570px}
+    .selected{font-size:10px;letter-spacing:.2em;color:#9db0c7;text-transform:uppercase}
+    .clubhead{display:flex;gap:18px;align-items:center;margin:28px 0}
+    .crest{width:62px;height:68px;flex:none;border:2px solid #dfe5ec;border-radius:8px 8px 20px 20px;background:repeating-linear-gradient(90deg,#d9dce1 0 10px,#c82d34 10px 20px);display:flex;align-items:center;justify-content:center;color:#111;font-size:12px;font-weight:900;text-shadow:0 1px #fff}
+    h2{font-size:25px;margin:0 0 6px}.city{color:#aab9ca;font-size:14px}
+    .details{border-top:1px solid var(--line);padding-top:18px;display:grid;gap:16px}
+    .detail{display:flex;justify-content:space-between;gap:15px;font-size:13px}.detail span:first-child{color:#9eafc4}.detail strong{text-align:right;font-weight:600}
+    .open{margin-top:auto;background:var(--red);border:0;color:white;padding:16px;font-size:12px;letter-spacing:.15em}
+    .below{margin-top:42px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    .info{padding:24px;background:var(--panel);border:1px solid var(--line)}.info h3{margin:0 0 12px;font-size:18px}.info p{color:#aebdd0;line-height:1.65;font-size:14px;margin:0}
+    footer{border-top:1px solid var(--line);padding:24px clamp(20px,5vw,64px);color:#71839b;font-size:12px}
+    .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0d192b;color:white}.leaflet-popup-content{font-weight:bold}
+    @media(max-width:850px){header{align-items:flex-start;flex-direction:column}.layout{grid-template-columns:1fr}#map{height:430px}.side{min-height:430px}.below{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<header>
+  <div class="brand">ENGLISH <span>FOOTBALL</span> ATLAS</div>
+  <nav><a href="#geografia">GEOGRAFIA</a><a href="#clube">CLUBES</a><a href="#historia">HISTÓRIA</a></nav>
+</header>
+<main>
+  <section id="geografia">
+    <div class="eyebrow">O futebol inglês, cidade por cidade</div>
+    <h1>A GEOGRAFIA DOS CLUBES</h1>
+    <p class="intro">Explore os clubes, suas cidades e seus estádios. Este é o primeiro protótipo do Atlas — começando pelo Sunderland.</p>
+    <div class="filters" aria-label="Filtros por divisão">
+      <button class="active" data-filter="all">TODAS</button>
+      <button data-filter="Premier League">● PREMIER LEAGUE</button>
+      <button data-filter="Championship">● CHAMPIONSHIP</button>
+      <button data-filter="League One">● LEAGUE ONE</button>
+      <button data-filter="League Two">● LEAGUE TWO</button>
+    </div>
+    <div class="layout">
+      <div id="map" aria-label="Mapa interativo do nordeste da Inglaterra"></div>
+      <aside class="side" id="clube">
+        <div class="selected">⌖ &nbsp; CLUBE SELECIONADO</div>
+        <div class="clubhead">
+          <div class="crest">SA</div>
+          <div><h2>SUNDERLAND AFC</h2><div class="city">Sunderland · Nordeste da Inglaterra</div></div>
+        </div>
+        <div class="details">
+          <div class="detail"><span>Fundação</span><strong>1879</strong></div>
+          <div class="detail"><span>Apelido</span><strong>The Black Cats</strong></div>
+          <div class="detail"><span>Divisão</span><strong>Premier League</strong></div>
+          <div class="detail"><span>Estádio</span><strong>Stadium of Light</strong></div>
+          <div class="detail"><span>Cores</span><strong>Vermelho e branco</strong></div>
+        </div>
+        <button class="open" onclick="document.getElementById('historia').scrollIntoView({behavior:'smooth'})">EXPLORAR O CLUBE &nbsp; →</button>
+      </aside>
+    </div>
+  </section>
+  <section class="below" id="historia">
+    <article class="info"><h3>Uma cidade, um clube</h3><p>Sunderland AFC foi fundado em 1879 e construiu uma identidade profundamente ligada à cidade de Sunderland, no nordeste da Inglaterra. O clube é conhecido como The Black Cats.</p></article>
+    <article class="info"><h3>Stadium of Light</h3><p>Inaugurado em 1997, o Stadium of Light é a casa do Sunderland. Nesta seção vamos aprofundar a história do estádio, sua arquitetura, a atmosfera dos jogos e a relação com a comunidade.</p></article>
+  </section>
+</main>
+<footer>ENGLISH FOOTBALL ATLAS · PROTÓTIPO INICIAL · Conteúdo em desenvolvimento</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map('map', {scrollWheelZoom:false}).setView([54.9,-1.45], 8);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'&copy; OpenStreetMap contributors', maxZoom:18
+  }).addTo(map);
+  const clubs = [{name:'Sunderland AFC',city:'Sunderland',division:'Premier League',coords:[54.914,-1.388]}];
+  const markers = [];
+  clubs.forEach(club => {
+    const marker = L.circleMarker(club.coords,{radius:9,color:'#ff3038',weight:2,fillColor:'#080e1c',fillOpacity:1}).addTo(map);
+    marker.bindPopup(club.name+'<br>'+club.city);
+    markers.push({marker,club});
+  });
+  document.querySelectorAll('[data-filter]').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('[data-filter]').forEach(b=>b.classList.remove('active'));
+      button.classList.add('active');
+      const filter=button.dataset.filter;
+      markers.forEach(({marker,club})=>{
+        if(filter==='all'||club.division===filter) marker.addTo(map);
+        else map.removeLayer(marker);
+      });
+    });
+  });
+</script>
+</body>
+</html>
